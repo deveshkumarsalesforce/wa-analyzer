@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # WA Log Analyzer
 
 A web application for analyzing **Web Adapter (WA)** log files from **Salesforce Commerce Cloud** (formerly Demandware). Upload pipe-delimited WA logs to explore traffic, performance, cache behavior, and request drilldown—all in the browser with no data sent to a server.
