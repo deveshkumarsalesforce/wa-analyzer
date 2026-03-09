@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { parseWALogFile } from './lib/waParser'
+import { streamWALogFile, formatProgress, type StreamWAProgress } from './lib/streamWaParser'
 import { exportElementToPdf } from './lib/pdfExport'
 import type { WALogRow } from './types/wa'
 import { TabAnalysis } from './components/TabAnalysis'
@@ -7,6 +8,8 @@ import { TabDrilldown } from './components/TabDrilldown'
 import { TabUrlAnalysis } from './components/TabUrlAnalysis'
 import { SQLExplorer } from './components/SQLExplorer'
 import './App.css'
+
+const STREAM_THRESHOLD_BYTES = 50 * 1024 * 1024
 
 type TabId = 'analysis' | 'drilldown' | 'url' | 'sql'
 
@@ -22,23 +25,61 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('analysis')
   const [dragOver, setDragOver] = useState(false)
   const [parseErrors, setParseErrors] = useState<string[]>([])
+  const [analysisError, setAnalysisError] = useState<string | null>(null)
+  const [progress, setProgress] = useState<StreamWAProgress | null>(null)
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const reportRef = useRef<HTMLDivElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const clearMemory = useCallback(() => {
     setWaLogs([])
     setParseErrors([])
+    setAnalysisError(null)
+    setProgress(null)
+    abortRef.current?.abort()
+    abortRef.current = null
   }, [])
 
   const processFile = useCallback((file: File) => {
     setParseErrors([])
+    setAnalysisError(null)
+    setProgress(null)
+    abortRef.current?.abort()
+    abortRef.current = null
+
+    if (file.size > STREAM_THRESHOLD_BYTES) {
+      abortRef.current = new AbortController()
+      setProgress({ bytesRead: 0, fileSize: file.size, linesParsed: 0, phase: 'reading' })
+      streamWALogFile(file, (p) => setProgress(p), abortRef.current.signal)
+        .then(({ rows, errors }) => {
+          setProgress(null)
+          abortRef.current = null
+          setWaLogs(rows)
+          setParseErrors(errors)
+        })
+        .catch((err) => {
+          setProgress(null)
+          abortRef.current = null
+          const message = err instanceof Error ? err.message : String(err)
+          setAnalysisError(message)
+        })
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = () => {
-      const text = reader.result as string
-      const { rows, errors } = parseWALogFile(text)
-      setWaLogs(rows)
-      setParseErrors(errors)
+      try {
+        const text = reader.result as string
+        const { rows, errors } = parseWALogFile(text)
+        setWaLogs(rows)
+        setParseErrors(errors)
+      } catch (err) {
+        setAnalysisError(err instanceof Error ? err.message : String(err))
+      }
+    }
+    reader.onerror = () => {
+      setAnalysisError(reader.error?.message ?? 'Failed to read file')
     }
     reader.readAsText(file, 'utf-8')
   }, [])
@@ -149,9 +190,36 @@ export default function App() {
           </div>
         )}
 
+        {progress && progress.phase !== 'done' && (
+          <div className="progress-card">
+            <div className="progress-bar-wrap">
+              <div
+                className="progress-bar-fill"
+                style={{
+                  width: `${progress.fileSize ? Math.min(100, (100 * progress.bytesRead) / progress.fileSize) : 0}%`,
+                }}
+              />
+            </div>
+            <div className="progress-status">
+              <span>{formatProgress(progress)}</span>
+              <button type="button" className="progress-cancel" onClick={() => abortRef.current?.abort()}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {analysisError && (
+          <div className="errors">
+            <strong>Analysis error</strong>
+            <p style={{ margin: '0.5rem 0 0 0' }}>{analysisError}</p>
+          </div>
+        )}
+
         {parseErrors.length > 0 && (
           <div className="errors">
-            <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
+            <strong>Parse notes</strong>
+            <ul style={{ margin: '0.5rem 0 0', paddingLeft: '1.25rem' }}>
               {parseErrors.map((err, i) => (
                 <li key={i}>{err}</li>
               ))}

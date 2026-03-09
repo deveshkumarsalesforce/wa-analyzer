@@ -1,7 +1,7 @@
 {
   "name": "wafanalyzer",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "WA Log Analyzer for Salesforce Commerce Cloud",
   "main": "electron/main.cjs",
   "author": "",
