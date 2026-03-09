@@ -20,7 +20,7 @@ You can use the app in either of these ways:
 
 Pre-built Mac apps are published as **GitHub Releases**.
 
-1. Open the [Releases](https://github.com/deveshkumarsalesforce/wafanalyzer/releases) page for this repo.
+1. Open the [Releases](https://github.com/deveshkumarsalesforce/wa-analyzer/releases) page for this repo.
 2. Pick the latest release (e.g. **v1.0.0**).
 3. Under **Assets**, download:
    - **WA Log Analyzer-1.0.0-arm64.dmg** — for Apple Silicon Macs (recommended). Double-click the DMG, drag **WA Log Analyzer** to Applications, then open the app from Applications or Spotlight.
@@ -34,7 +34,7 @@ No code checkout or `npm` required. The app runs offline; use **New Upload** or 
 
 ## Option 1: Download Mac app (DMG)
 
-1. Go to [Releases](https://github.com/deveshkumarsalesforce/wafanalyzer/releases) and download the latest **DMG** (or ZIP) from Assets.
+1. Go to [Releases](https://github.com/deveshkumarsalesforce/wa-analyzer/releases) and download the latest **DMG** (or ZIP) from Assets.
 2. **DMG:** Double-click the DMG file → drag **WA Log Analyzer** to **Applications** → open **WA Log Analyzer** from Applications or Spotlight.
 3. **ZIP:** Unzip the downloaded file → double-click **WA Log Analyzer.app**.
 4. In the app, click **New Upload** or drag a WA log file onto the window to load and analyze it.
@@ -48,8 +48,8 @@ No code checkout or `npm` required. The app runs offline; use **New Upload** or 
 For developers who want to run or modify the code:
 
 ```bash
-git clone https://github.com/deveshkumarsalesforce/wafanalyzer.git
-cd wafanalyzer
+git clone https://github.com/deveshkumarsalesforce/wa-analyzer.git
+cd wa-analyzer
 npm install
 npm run dev
 ```
