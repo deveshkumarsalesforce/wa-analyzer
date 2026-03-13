@@ -6,13 +6,13 @@ A web application for analyzing **Web Adapter (WA)** log files from **Salesforce
 
 ## Two ways to run
 
-You can use the app in either of these ways:
-
 | | **Download Mac app** | **Run from source (npm)** |
 |---|----------------------|----------------------------|
-| **Best for** | Anyone on your team; no dev setup | Developers who want to change code or run the latest branch |
-| **Requirements** | Mac (Apple Silicon). No Node, no git. | Node.js 18+, npm, git |
-| **Steps** | Download the DMG from [Releases](#releases), open it, drag the app to Applications, then launch **WA Log Analyzer**. | Clone the repo, `npm install`, `npm run dev`, then open http://localhost:5173 in your browser. |
+| **Best for** | Mac users; no dev setup | Windows users, or anyone who wants to run in the browser / change code |
+| **Requirements** | Mac (Apple Silicon). No Node, no git. | Node.js 18+, npm. Git (or download repo as ZIP). |
+| **Steps** | Download the DMG from [Releases](#releases), open it, drag the app to Applications, then launch **WA Log Analyzer**. | Clone the repo (or download ZIP), `npm install`, `npm run dev`, then open http://localhost:5173 in your browser. |
+
+**Windows users:** There is no pre-built Windows app. Use the [Run from source](#option-2-run-from-source-npm) option below to run the app in your browser—same features, same local processing.
 
 ---
 
@@ -43,20 +43,44 @@ No code checkout or `npm` required. The app runs offline; use **New Upload** or 
 
 ---
 
-## Option 2: Run from source (npm)
+## Option 2: Run from source (npm) — Mac, Windows, Linux
 
-For developers who want to run or modify the code:
+Use this if you’re on **Windows**, or if you prefer to run in the browser or modify the code.
+
+### Step 1: Install Node.js
+
+- **Windows / Mac / Linux:** Download and install the **LTS** version from [nodejs.org](https://nodejs.org). This includes `npm`.
+
+### Step 2: Get the repo
+
+**Option A — with Git:**
 
 ```bash
 git clone https://github.com/deveshkumarsalesforce/wa-analyzer.git
 cd wa-analyzer
+```
+
+**Option B — without Git (e.g. Windows):**
+
+1. Open [github.com/deveshkumarsalesforce/wa-analyzer](https://github.com/deveshkumarsalesforce/wa-analyzer), click **Code** → **Download ZIP**.
+2. Unzip the folder and open a terminal in that folder (e.g. in File Explorer, shift+right-click the folder → **Open PowerShell window here**).
+
+### Step 3: Install and run
+
+```bash
 npm install
 npm run dev
 ```
 
-Then open [http://localhost:5173](http://localhost:5173) in your browser.
+### Step 4: Open the app
 
-To **build the Mac app** yourself (e.g. to create a new release):
+In your browser, go to [http://localhost:5173](http://localhost:5173). Use **New Upload** or drag a WA log file onto the page to analyze. All processing stays on your machine.
+
+---
+
+**Windows shortcut:** After Step 2 (ZIP or clone), open Command Prompt or PowerShell in the project folder, run `npm install` then `npm run dev`, then open http://localhost:5173 in Chrome or Edge.
+
+**Build Mac app (optional, Mac only):** To create a new release or run as a desktop app on Mac:
 
 ```bash
 npm run build:app
